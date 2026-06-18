@@ -1,0 +1,52 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+import random
+
+# Criando um grafo vazio
+G = nx.Graph()
+
+# Lista com 10 usuários
+usuarios = [f"Usuario_{i}" for i in range(1, 11)]
+
+# Adicionando os usuários ao grafo
+G.add_nodes_from(usuarios)
+
+# Criando conexões aleatórias entre os usuários
+for i in usuarios:
+    for j in usuarios:
+        if i != j and random.random() < 0.3:  # 30% de chance de conexão
+            G.add_edge(i, j)
+
+# Calculando o Betweenness Centrality
+centralidade = nx.betweenness_centrality(G)
+
+# Identificando o usuário mais influente
+mais_influente = max(centralidade, key=centralidade.get)
+
+# Exibindo os valores de centralidade
+print("Betweenness Centrality dos usuários:\n")
+for usuario, valor in centralidade.items():
+    print(f"{usuario}: {valor:.4f}")
+
+print("\nUsuário mais influente:", mais_influente)
+
+# Desenhando o grafo
+plt.figure(figsize=(10, 7))
+
+pos = nx.spring_layout(G, seed=42)
+
+# Destacando o usuário mais influente
+cores = ["red" if node == mais_influente else "skyblue" for node in G.nodes()]
+
+nx.draw(
+    G,
+    pos,
+    with_labels=True,
+    node_color=cores,
+    node_size=2000,
+    font_size=9,
+    font_weight="bold"
+)
+
+plt.title("Rede de Usuários - Betweenness Centrality")
+plt.show()
